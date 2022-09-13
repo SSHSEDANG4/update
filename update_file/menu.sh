@@ -2,18 +2,21 @@
 dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
 biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
 ###########- COLOR CODE -##############
-colornow=$(cat /etc/scvpn/theme/color.conf)
+colornow=$(cat /etc/ssnvpn/theme/color.conf)
 export NC="\e[0m"
 export YELLOW='\033[0;33m';
 export RED="\033[0;31m" 
-export COLOR1="$(cat /etc/scvpn/theme/$colornow | grep -w "TEXT" | cut -d: -f2|sed 's/ //g')"
-export COLBG1="$(cat /etc/scvpn/theme/$colornow | grep -w "BG" | cut -d: -f2|sed 's/ //g')"                    
+export COLOR1="$(cat /etc/ssnvpn/theme/$colornow | grep -w "TEXT" | cut -d: -f2|sed 's/ //g')"
+export COLBG1="$(cat /etc/ssnvpn/theme/$colornow | grep -w "BG" | cut -d: -f2|sed 's/ //g')"                    
 ###########- END COLOR CODE -##########
-
+tram=$( free -h | awk 'NR==2 {print $2}' )
+uram=$( free -h | awk 'NR==2 {print $3}' )
+ISP=$(curl -s ipinfo.io/org | cut -d " " -f 2-10 )
+CITY=$(curl -s ipinfo.io/city )
 
 
 BURIQ () {
-    curl -sS https://raw.githubusercontent.com/kamunikan/permission/main/ipmini > /root/tmp
+    curl -sS https://raw.githubusercontent.com/SSHSEDANG4/permission/main/ipmini > /root/tmp
     data=( `cat /root/tmp | grep -E "^### " | awk '{print $2}'` )
     for user in "${data[@]}"
     do
@@ -31,8 +34,8 @@ BURIQ () {
 }
 
 MYIP=$(curl -sS ipv4.icanhazip.com)
-Name=$(curl -sS https://raw.githubusercontent.com/kamunikan/permission/main/ipmini | grep $MYIP | awk '{print $2}')
-Isadmin=$(curl -sS https://raw.githubusercontent.com/kamunikan/permission/main/ipmini | grep $MYIP | awk '{print $5}')
+Name=$(curl -sS https://raw.githubusercontent.com/SSHSEDANG4/permission/main/ipmini | grep $MYIP | awk '{print $2}')
+Isadmin=$(curl -sS https://raw.githubusercontent.com/SSHSEDANG4/permission/main/ipmini | grep $MYIP | awk '{print $5}')
 echo $Name > /usr/local/etc/.$Name.ini
 CekOne=$(cat /usr/local/etc/.$Name.ini)
 
@@ -49,7 +52,7 @@ fi
 
 PERMISSION () {
     MYIP=$(curl -sS ipv4.icanhazip.com)
-    IZIN=$(curl -sS https://raw.githubusercontent.com/kamunikan/permission/main/ipmini | awk '{print $4}' | grep $MYIP)
+    IZIN=$(curl -sS https://raw.githubusercontent.com/SSHSEDANG4/permission/main/ipmini | awk '{print $4}' | grep $MYIP)
     if [ "$MYIP" = "$IZIN" ]; then
     Bloman
     else
@@ -67,7 +70,7 @@ if [ "$res" = "Expired" ]; then
 Exp="\e[36mExpired\033[0m"
 rm -f /home/needupdate > /dev/null 2>&1
 else
-Exp=$(curl -sS https://raw.githubusercontent.com/kamunikan/permission/main/ipmini | grep $MYIP | awk '{print $3}')
+Exp=$(curl -sS https://raw.githubusercontent.com/SSHSEDANG4/permission/main/ipmini | grep $MYIP | awk '{print $3}')
 fi
 export RED='\033[0;31m'
 export GREEN='\033[0;32m'
@@ -111,7 +114,7 @@ echo ""
 read -n 1 -s -r -p "  Press any key to back on menu"
 menu
 else
-echo "IP=$host" > /var/lib/scvpn-pro/ipvps.conf
+echo "IP=$host" > /var/lib/ssnvpn-pro/ipvps.conf
 echo ""
 echo "  [INFO] Dont forget to renew cert"
 echo ""
@@ -130,16 +133,18 @@ echo -e "$COLOR1└────────────────────�
 echo -e "$COLOR1┌─────────────────────────────────────────────────┐${NC}"
 echo -e "$COLOR1│${NC}  $COLOR1[INFO]${NC} Check for Script updates"
 sleep 2
-wget https://raw.githubusercontent.com/kamunikan/update/main/install_up.sh && chmod +x install_up.sh && ./install_up.sh
+wget -q -O /root/install_up.sh "https://raw.githubusercontent.com/SSHSEDANG4/update/main/install_up.sh" && chmod +x /root/install_up.sh
+sleep 2
+./install_up.sh
 sleep 5
-rm ./install_up.sh
+rm /root/install_up.sh
 rm /opt/.ver
-version_up=$( curl -sS https://raw.githubusercontent.com/kamunikan/update/main/version_up)
+version_up=$( curl -sS https://raw.githubusercontent.com/SSHSEDANG4/update/main/version_up)
 echo "$version_up" > /opt/.ver
 echo -e "$COLOR1│${NC}  $COLOR1[INFO]${NC} Successfully Up To Date!"
 echo -e "$COLOR1└─────────────────────────────────────────────────┘${NC}"
 echo -e "$COLOR1┌────────────────────── BY ───────────────────────┐${NC}"
-echo -e "$COLOR1│${NC}              • WWW.DOTYCAT.COM •                $COLOR1│$NC"
+echo -e "$COLOR1│${NC}              • WWW.SSHSEDANG.MY.ID •                $COLOR1│$NC"
 echo -e "$COLOR1└─────────────────────────────────────────────────┘${NC}" 
 echo ""
 read -n 1 -s -r -p "  Press any key to back on menu"
@@ -149,13 +154,14 @@ clear
 echo -e "$COLOR1┌─────────────────────────────────────────────────┐${NC}"
 echo -e "$COLOR1│${NC} ${COLBG1}               • VPS PANEL MENU •              ${NC} $COLOR1│$NC"
 echo -e "$COLOR1└─────────────────────────────────────────────────┘${NC}"
+echo -e "$COLOR1                   Some Information                ${NC}"
 echo -e "$COLOR1┌─────────────────────────────────────────────────┐${NC}"
 uphours=`uptime -p | awk '{print $2,$3}' | cut -d , -f1`
 upminutes=`uptime -p | awk '{print $4,$5}' | cut -d , -f1`
 uptimecek=`uptime -p | awk '{print $6,$7}' | cut -d , -f1`
 cekup=`uptime -p | grep -ow "day"`
 IPVPS=$(curl -s ipinfo.io/ip )
-serverV=$( curl -sS https://raw.githubusercontent.com/kamunikan/update/main/version_up)
+serverV=$( curl -sS https://raw.githubusercontent.com/SSHSEDANG4/update/main/version_up)
 if [ "$Isadmin" = "ON" ]; then
 uis="${GREEN}Premium User$NC"
 else
@@ -167,22 +173,25 @@ echo -e "$COLOR1│$NC System Uptime  : $uphours $upminutes $uptimecek"
 else
 echo -e "$COLOR1│$NC System Uptime  : $uphours $upminutes"
 fi
+echo -e "$COLOR1│$NC Memory Usage   : $uram / $tram"
+echo -e "$COLOR1│$NC ISP & City     : $ISP & $CITY"
 echo -e "$COLOR1│$NC Current Domain : $(cat /etc/xray/domain)"
 echo -e "$COLOR1│$NC IP-VPS         : ${COLOR1}$IPVPS${NC}"
 echo -e "$COLOR1└─────────────────────────────────────────────────┘${NC}"
+echo -e "$COLOR1                Status Service Running             ${NC}" 
 echo -e "$COLOR1┌─────────────────────────────────────────────────┐${NC}"
 echo -e "$COLOR1│$NC [ SSH WS : ${status_ws} ]  [ XRAY : ${status_xray} ]   [ NGINX : ${status_nginx} ] $COLOR1│$NC"
 echo -e "$COLOR1└─────────────────────────────────────────────────┘${NC}"
 echo -e "$COLOR1┌─────────────────────────────────────────────────┐${NC}"
 echo -e "  ${COLOR1}[01]${NC} • SSHWS   [${YELLOW}Menu${NC}]   ${COLOR1}[07]${NC} • THEME    [${YELLOW}Menu${NC}]  $COLOR1│$NC"   
 echo -e "  ${COLOR1}[02]${NC} • VMESS   [${YELLOW}Menu${NC}]   ${COLOR1}[08]${NC} • BACKUP   [${YELLOW}Menu${NC}]  $COLOR1│$NC"  
-echo -e "  ${COLOR1}[03]${NC} • VLESS   [${YELLOW}Menu${NC}]   ${COLOR1}[09]${NC} • ADD HOST         $COLOR1│$NC"  
-echo -e "  ${COLOR1}[04]${NC} • TROJAN  [${YELLOW}Menu${NC}]   ${COLOR1}[10]${NC} • GEN SSL          $COLOR1│$NC"  
+echo -e "  ${COLOR1}[03]${NC} • VLESS   [${YELLOW}Menu${NC}]   ${COLOR1}[09]${NC} • ADD HOST/DOMAIN  $COLOR1│$NC"  
+echo -e "  ${COLOR1}[04]${NC} • TROJAN  [${YELLOW}Menu${NC}]   ${COLOR1}[10]${NC} • RENEW CERT       $COLOR1│$NC"  
 echo -e "  ${COLOR1}[05]${NC} • SS WS   [${YELLOW}Menu${NC}]   ${COLOR1}[11]${NC} • SETTINGS [${YELLOW}Menu${NC}]  $COLOR1│$NC"
-echo -e "  ${COLOR1}[06]${NC} • SET DNS [${YELLOW}Menu${NC}]                           $COLOR1│$NC"
+echo -e "  ${COLOR1}[06]${NC} • SET DNS [${YELLOW}Menu${NC}]   ${COLOR1}[12]${NC} • INFO     [${YELLOW}Menu${NC}]  $COLOR1│$NC"
 if [ "$Isadmin" = "ON" ]; then
 echo -e "                                                  $COLOR1│$NC"
-echo -e "  ${COLOR1}[12]${NC} • REG IP  [${YELLOW}Menu${NC}]   ${COLOR1}[13]${NC} • SET BOT  [${YELLOW}Menu${NC}]  $COLOR1│$NC"
+echo -e "  ${COLOR1}[13]${NC} • REG IP  [${YELLOW}Menu${NC}]   ${COLOR1}[14]${NC} • SET BOT  [${YELLOW}Menu${NC}]  $COLOR1│$NC"
 ressee="menu-ip"
 bottt="menu-bot"
 else
@@ -209,7 +218,7 @@ datediff() {
 }
 mai="datediff "$Exp" "$DATE""
 
-echo -e "$COLOR1┌─────────────────────────────────────┐$NC"
+echo -e "$COLOR1┌─────────────────────────────────────────────────┐$NC"
 echo -e "$COLOR1│$NC Version     :${COLOR1} $(cat /opt/.ver) Latest Version${NC}"
 echo -e "$COLOR1│$NC Client Name : $Name"
 if [ $exp \> 1000 ];
@@ -218,9 +227,9 @@ then
 else
     datediff "$Exp" "$DATE"
 fi;
-echo -e "$COLOR1└─────────────────────────────────────┘$NC"
+echo -e "$COLOR1└─────────────────────────────────────────────────┘$NC"
 echo -e "$COLOR1┌────────────────────── BY ───────────────────────┐${NC}"
-echo -e "$COLOR1│${NC}              • WWW.DOTYCAT.COM •                $COLOR1│$NC"
+echo -e "$COLOR1│${NC}              • WWW.SSHSEDANG.MY.ID •            $COLOR1│$NC"
 echo -e "$COLOR1└─────────────────────────────────────────────────┘${NC}" 
 echo -e ""
 echo -ne " Select menu : "; read opt
@@ -236,8 +245,9 @@ case $opt in
 09 | 9) clear ; add-host ;;
 10) clear ; crtxray ;;
 11) clear ; menu-set ;;
-12) clear ; $ressee ;;
-13) clear ; $bottt ;;
+12) clear ; info ;;
+13) clear ; $ressee ;;
+14) clear ; $bottt ;;
 100) clear ; $up2u ;;
 00 | 0) clear ; menu ;;
 *) clear ; menu ;;
